@@ -1,28 +1,24 @@
 package routers
 
 import (
-	"net/http"
-    "io"
-	// "alexshelto/url_shorten_service/Controllers"
+    "github.com/gin-gonic/gin"
+
+	"alexshelto/url_shorten_service/Controllers"
 )
 
-func GetPage(w http.ResponseWriter, r *http.Request) {
-    io.WriteString(w, "Get page!\n")
+
+func SetUpRouters() *gin.Engine {
+    router := gin.Default()
+
+    // version 1
+	apiV1 := router.Group("api/v1")
+    apiV1.POST("/p", Controller.CreateHashedPageV1)
+
+    router.GET("/p/:hash", Controller.GetPageFromHash)
+
+    return router
 }
 
-func ShortenUrl(w http.ResponseWriter, r *http.Request) {
-    io.WriteString(w, "Get page!\n")
-}
-
-
-func SetUpRouters() *http.ServeMux {
-    mux := http.NewServeMux()
-
-    mux.HandleFunc("/api/v1/p", ShortenUrl)
-    mux.HandleFunc("/p", GetPage)
-
-    return mux
-}
 
 
 

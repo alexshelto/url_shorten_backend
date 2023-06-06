@@ -1,37 +1,37 @@
 package Controller
 
 import (
-    /*
-    "gorm.io/driver/sqlite"
-    "gorm.io/gorm"
-    */
-	"github.com/gofiber/fiber/v2"
+    "fmt"
+    "net/http"
+    "github.com/gin-gonic/gin"
 )
 
-//Hello
-func Hello(c *fiber.Ctx) error {
-	return c.SendString("fiber")
+
+type CreateHashedPageV1Body struct {
+  // json tag to de-serialize json body
+   Url string `json:"url"`
 }
 
-func GetHashedUrl(c *fiber.Ctx) error {
-    id := c.Params("id")
-    return c.SendString("Create hashed URL " + id)
-}
 
-func CreateHashedUrlV1(c *fiber.Ctx) error {
-    return c.SendString("Create hashed URL")
-}
-
-//AddBook
 /*
-func AddBook(c *fiber.Ctx) error {
-	book := new(models.Book)
-	if err := c.BodyParser(book); err != nil {
-		return c.Status(400).JSON(err.Error())
-	}
-
-	database.DBConn.Create(&book)
-
-	return c.Status(200).JSON(book)
-}
+    POST: /api/v1/p
+    BODY: { url: string }
 */
+func CreateHashedPageV1(context *gin.Context) {
+    body := CreateHashedPageV1Body{}
+
+    if err := context.BindJSON(&body); err!=nil {
+        context.AbortWithError(http.StatusBadRequest,err)
+        return
+    }
+
+    fmt.Println(body)
+    context.JSON(http.StatusAccepted,&body)
+}
+
+
+func GetPageFromHash(context *gin.Context) {
+	context.JSON(http.StatusOK, "Shorten url")
+}
+
+
