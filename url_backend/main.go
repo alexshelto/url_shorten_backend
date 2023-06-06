@@ -1,32 +1,22 @@
 package main
 
+import "github.com/gofiber/fiber/v2"
 
-import (
-    "net/http"
-    "github.com/gin-gonic/gin"
-)
-
-
-
-
-func retrieve_page_from_hash(c *gin.Context) {
-    name := c.Param("hash")
-    c.String(http.StatusOK, "Hello %s", name)
-}
-
-
-func ping(c *gin.Context) {
-    c.JSON(http.StatusOK, gin.H{
-        "message": "pong",
-    })
+func create_shortened_url(c *fiber.Ctx) error {
+    return c.SendString("Create URL")
 }
 
 
 func main() {
-    router := gin.Default()
+    app := fiber.New()
 
-    router.GET("/ping", ping)
-    router.GET("/p/:hash", retrieve_page_from_hash)
+    apiV1 := app.Group("/api/v1") // /api/v1
+    apiV1.Post("/p", create_shortened_url)
 
-    router.Run() // listen and serve on 0.0.0.0:8080
+    app.Get("/", func(c *fiber.Ctx) error {
+        return c.SendString("Hello, World!")
+    })
+
+    app.Listen(":3000")
 }
+
