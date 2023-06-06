@@ -1,22 +1,17 @@
 package main
 
-import "github.com/gofiber/fiber/v2"
+// TODO: Use net/http instead of fiber
 
-func create_shortened_url(c *fiber.Ctx) error {
-    return c.SendString("Create URL")
-}
+import (
+    "net/http"
+    "alexshelto/url_shorten_service/Routers"
+)
 
 
 func main() {
-    app := fiber.New()
-
-    apiV1 := app.Group("/api/v1") // /api/v1
-    apiV1.Post("/p", create_shortened_url)
-
-    app.Get("/", func(c *fiber.Ctx) error {
-        return c.SendString("Hello, World!")
-    })
-
-    app.Listen(":3000")
+    mux := routers.SetUpRouters()
+    if err := http.ListenAndServe(":8000", mux); err != nil {
+    panic(err)
+  }
 }
 
