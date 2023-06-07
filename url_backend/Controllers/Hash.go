@@ -8,14 +8,18 @@ import (
 
 
 type CreateHashedPageV1Body struct {
-  // json tag to de-serialize json body
-   Url string `json:"url"`
+    Url string `json:"url"`
+    ShowMsgPage bool `json:"show_msg_page"`
+    Message string `json:"message"`
 }
-
 
 /*
     POST: /api/v1/p
-    BODY: { url: string }
+    BODY: { 
+        url:             string (required)
+        ShowMsgPage:     bool   (optional)
+        Message:         string (optional)
+    }
 */
 func CreateHashedPageV1(context *gin.Context) {
     body := CreateHashedPageV1Body{}
@@ -31,6 +35,9 @@ func CreateHashedPageV1(context *gin.Context) {
 
 
 func GetPageFromHash(context *gin.Context) {
+    // Reach out to db with hash..
+    // if row has field of message page render that for them,
+    // else redirect to the original 
 	context.JSON(http.StatusOK, "Shorten url")
 }
 

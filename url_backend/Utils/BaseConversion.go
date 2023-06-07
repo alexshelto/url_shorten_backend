@@ -1,11 +1,5 @@
 package BaseConversion
 
-
-/*
-465
-465 / 62 = 7 R 31  ("7")
-31                 ("v")
-*/
 func ConvertToBase62(number int) string {
     const BASE = 62
     ret := ""
@@ -20,62 +14,6 @@ func ConvertToBase62(number int) string {
         } 
     }
 }
-
-/*
-
-0: a,
-1: b,
-2: c, 
-3: d,
-4: e,
-5: f, 
-6: g,
-7: h, 
-8: i,
-9: j, 
-10: k
-*/
-
-/*
-0:
-
-// what i want is...
-22 22 / 10: 2 (c) 
-2             (c)
-22 = cc
-
-41: 
-41 / 10 = 4 R 1 (4) => e
-1               (1) => b
-
-
-rules...  
-if num > base..  
-based = math.floor(num/base) 
-num - base 
-map[based] 
-
-
-63: 
-63 / 62 = 1 R 1 ("1")
-1               ("1")
-
-64
-64 / 62 = 1 R 2 ("1")
-2               ("2")
-
-465
-465 / 62 = 7 R 31  ("7")
-31                 ("v")
-
-{1, "1"},
-{4, "4"},
-{39,"C"},
-{62, "0"},
-{63, "11"},
-{64, "12"},
-{465, "7v"},
-*/
 
 var Base62Mappings = map[int]string{
     0: "0",
@@ -140,6 +78,5 @@ var Base62Mappings = map[int]string{
     59: "X",
     60: "Y",
     61: "Z",
-
 }
 
