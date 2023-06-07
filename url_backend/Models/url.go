@@ -5,8 +5,7 @@ package models
 Object created for the db
 */
 type Url struct {
-    // Id              uint   `json:"id"`
-    Id              int    `gorm:"primaryKey;default:auto_random()"`
+    Id              int    `json:"id"` 
     Url             string `json:"url"`
     Hashed          string `json:"hashed"`
     Message         string `json:"message"`

@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"net/http"
 
+    "errors"
+    "gorm.io/gorm"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -54,10 +57,32 @@ func CreateHashedPageV1(context *gin.Context) {
 
 
 func GetPageFromHash(context *gin.Context) {
-    // Reach out to db with hash..
-    // if row has field of message page render that for them,
-    // else redirect to the original 
-	context.JSON(http.StatusOK, "Shorten url")
+    hash := context.Param("hash")
+
+    queriedUrl := models.Url{}
+
+    err := models.DB.First(&queriedUrl, hash).Error
+    fmt.Println(err)
+
+    if errors.Is(err, gorm.ErrRecordNotFound) {
+        fmt.Println("Not found")
+        context.HTML(http.StatusNotFound, "404.html", nil)
+        return
+    }
+
+    if err != nil {
+        context.AbortWithError(http.StatusInternalServerError, err)
+    }
+
+    if queriedUrl.ShowMsg == true {
+        context.HTML(http.StatusOK, "msg.html", gin.H{
+            "message": queriedUrl.Message,
+            "link": queriedUrl.Url,
+        })
+    } 
+
+    context.Redirect(http.StatusPermanentRedirect, queriedUrl.Url)
 }
+
 
 
