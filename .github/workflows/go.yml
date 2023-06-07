@@ -24,5 +24,8 @@ jobs:
     - name: Test
       run: go test -v ./...
 
+    - name: ls 
+      run: ls 
+
     - name: run
       run: ./main
