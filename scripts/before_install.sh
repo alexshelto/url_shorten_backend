@@ -1,7 +1,7 @@
 #!/bin/bash
 
-sudo yum update
-sudo yum install golang
+sudo yum -y update
+sudo yum -y install golang
 
 DIR="/home/ec2-user/url-app"
 
