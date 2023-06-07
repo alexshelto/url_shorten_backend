@@ -1,13 +1,49 @@
+
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title></title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-    </head>
-    <body>
 
-        <h1>{{.message}}</h1>
-        <a href={{.link}}>visit link</a>
-    </body>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>A Message</title>
+</head>
+
+<body>
+    <!-- Background Container -->
+    <div class="flex items-center justify-center h-screen bg-slate-700">
+        <!-- Card -->
+        <div class="bg-zinc-800 p-2 mx-6 rounded-2xl w-1/2 h-1/3">
+
+            <!-- Flex Container -->
+            <div class="flex flex-col rounded-l-xl space-y-5">
+
+                <div class="p-6">
+                    <h2 class="font-serif text-xl font-medium text-center text-white ">
+                        {{.message}}
+                    </h2>
+                </div>
+
+                <div class="p-6 flex justify-center">
+                    <button
+                        class=" px-5 py-3 text-xs rounded-md text-zinc-800 bg-lime-500 hover:bg-lime-700 hover:text-white duration-500">
+                        <a href={{.link}}>
+                            Visit Link
+                        </a>
+                    </button>
+                </div>
+
+                <div class="p-6">
+                    <h3 class="font-serif text-xl font-medium text-center text-white ">
+                        Visit Count: {{.visit_count}}
+                    </h3>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+
 </html>
+

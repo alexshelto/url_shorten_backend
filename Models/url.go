@@ -10,4 +10,5 @@ type Url struct {
     Hashed          string `json:"hashed"`
     Message         string `json:"message"`
     ShowMsg         bool   `json:"show_msg"`
+    VisitCount      int    `json:"visit_count"`
 }
