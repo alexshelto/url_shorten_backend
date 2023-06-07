@@ -1,5 +1,18 @@
 version: 0.0
 os: linux
 files:
-  - source: /main.go
-    destination: /opt
+  - source: /
+    destination: /home/ec2-user/url-app
+hooks:
+  ApplicationStop: 
+    - location: scripts/stop_app.sh 
+      timeout: 300 
+      runas: ec2-user
+  BeforeInstall:
+    - location: scripts/before_install.sh 
+      timeout: 300 
+      runas: ec2-user
+  ApplicationStart:
+    - location: scripts/start_app.sh 
+      timeout: 300 
+      runas: ec2-user
