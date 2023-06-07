@@ -28,4 +28,4 @@ jobs:
       run: ls 
 
     - name: run
-      run: ./main
+      run: ./url_shorten_service
