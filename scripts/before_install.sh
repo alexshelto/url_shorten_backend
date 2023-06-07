@@ -1,8 +1,7 @@
 #!/bin/bash
 
-sudo apt install 
-sudo apt update
-sudo apt install golang-go --fix-missing
+yum update
+yum install golang
 
 DIR="/home/ec2-user/url-app"
 
