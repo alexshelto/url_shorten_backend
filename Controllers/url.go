@@ -23,6 +23,36 @@ type CreateHashedUrlV1Body struct {
 }
 
 
+func UpdateUrlViewCount(url *models.Url) error {
+        result := models.DB.Model(&url).Update("visit_count", url.VisitCount + 1).Error
+        return result 
+}
+
+func UpdateUrlHash(url *models.Url, hash string) error {
+    result := models.DB.Model(&url).Update("hashed", hash).Error
+    return result
+}
+
+func GetUrlByHash(hash string) (error, models.Url) {
+    queriedUrl := models.Url{}
+    result := models.DB.First(&queriedUrl, hash).Error
+    return result, queriedUrl
+}
+
+func FindByHashAndIncrementCount(hash string) (error, models.Url) {
+    err, queriedUrl := GetUrlByHash(hash)
+    if err != nil {
+        return err, queriedUrl
+    }
+    fmt.Println(queriedUrl)
+
+    err = UpdateUrlViewCount(&queriedUrl)
+    if err != nil {
+        return err, queriedUrl
+    }
+    return nil, queriedUrl
+}
+
 
 // POST: /api/v1/p
 func CreateHashedPageV1(context *gin.Context) {
@@ -33,23 +63,18 @@ func CreateHashedPageV1(context *gin.Context) {
         return
     }
 
-    fmt.Println(body)
-
     url := models.Url{Url: body.Url, Message: body.Message, ShowMsg: body.ShowMsgPage}
     result := models.DB.Create(&url)
-
     if result.Error != nil {
         context.AbortWithError(http.StatusInternalServerError, result.Error)
     }
 
     hash := BaseConversion.ConvertToBase62(url.Id)
-    fmt.Println("item had id: ", url.Id, " created hash: ", hash)
-    url.Hashed = hash
 
-    result = models.DB.Model(&url).Update("hashed", hash)
-
-    if result.Error != nil {
-        context.AbortWithError(http.StatusInternalServerError, result.Error)
+    err := UpdateUrlHash(&url, hash)
+    if errors.Is(err, gorm.ErrRecordNotFound) {
+        context.HTML(http.StatusNotFound, "404.html", nil)
+        return
     }
 
     context.JSON(http.StatusAccepted,&body)
@@ -59,30 +84,48 @@ func CreateHashedPageV1(context *gin.Context) {
 func GetPageFromHash(context *gin.Context) {
     hash := context.Param("hash")
 
-    queriedUrl := models.Url{}
-
-    err := models.DB.First(&queriedUrl, hash).Error
-    fmt.Println(err)
-
-    if errors.Is(err, gorm.ErrRecordNotFound) {
-        fmt.Println("Not found")
-        context.HTML(http.StatusNotFound, "404.html", nil)
-        return
-    }
+    err, queriedUrl := FindByHashAndIncrementCount(hash)
 
     if err != nil {
+        if errors.Is(err, gorm.ErrRecordNotFound) {
+            fmt.Println("Not found")
+            context.HTML(http.StatusNotFound, "404.html", nil)
+            return
+        }
         context.AbortWithError(http.StatusInternalServerError, err)
+        return
     }
 
     if queriedUrl.ShowMsg == true {
         context.HTML(http.StatusOK, "msg.html", gin.H{
             "message": queriedUrl.Message,
             "link": queriedUrl.Url,
+            "visit_count": queriedUrl.VisitCount + 1,
         })
     } 
-
     context.Redirect(http.StatusPermanentRedirect, queriedUrl.Url)
 }
 
 
+func GetPageInfoFromHash(context *gin.Context) {
+    hash := context.Param("hash")
+
+    err, queriedUrl := FindByHashAndIncrementCount(hash)
+
+    if err != nil {
+        if errors.Is(err, gorm.ErrRecordNotFound) {
+            fmt.Println("Not found")
+            context.HTML(http.StatusNotFound, "404.html", nil)
+            return
+        }
+        context.AbortWithError(http.StatusInternalServerError, err)
+        return
+    }
+
+    context.HTML(http.StatusOK, "msg.html", gin.H{
+        "info": queriedUrl.Message,
+        "link": queriedUrl.Url,
+        "visit_count": queriedUrl.VisitCount + 1,
+    })
+}
 

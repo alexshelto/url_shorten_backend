@@ -11,6 +11,6 @@ func main() {
     router := routers.SetUpRouters()
     models.ConnectDatabase()
 
-    router.Run(":8000")
+    router.Run(":8080")
 }
 

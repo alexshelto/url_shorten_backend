@@ -15,6 +15,7 @@ func SetUpRouters() *gin.Engine {
 	apiV1 := router.Group("api/v1")
     apiV1.POST("/p", Controller.CreateHashedPageV1)
     router.GET("/p/:hash", Controller.GetPageFromHash)
+    router.GET("/p/info/:hash", Controller.GetPageInfoFromHash)
 
     return router
 }
