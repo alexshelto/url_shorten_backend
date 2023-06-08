@@ -18,6 +18,12 @@ jobs:
           go-version: '1.18.0-rc.1' 
       - run: go version
 
+      - name: Debug
+        run: |
+          pwd
+          echo "GO PATH ${GOPATH}"
+          echo "GO ROOT ${GOROOT}"
+
       - name: Build
         run: go build -v ./...
 
