@@ -6,8 +6,6 @@ name: Go
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
 
@@ -22,6 +20,7 @@ jobs:
         go-version: 1.19
 
     - name: Build
+      run: export GOPATH=$HOME/go
       run: go build -v ./...
 
     - name: Test
