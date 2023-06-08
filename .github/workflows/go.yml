@@ -26,6 +26,10 @@ jobs:
 
     - name: ls 
       run: ls 
-
+      
+    - name: Set env vars
+      env:
+        MYSQL_DSN: ${{ secrets.MYSQL_DSN }}
+        
     - name: run
       run: ./url_shorten_service
