@@ -10,6 +10,8 @@ on:
 jobs:
 
   build:
+    env:
+      HOME: '/root'
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v3
