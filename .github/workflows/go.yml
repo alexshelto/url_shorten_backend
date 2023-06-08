@@ -23,7 +23,7 @@ jobs:
 
 
     - name: Build
-      run: go build .
+      run: go build -v ./...
 
     - name: ls 
       run: ls 
