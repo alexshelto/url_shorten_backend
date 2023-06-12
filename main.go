@@ -1,15 +1,17 @@
 package main
 
 import (
-	"alexshelto/url_shorten_service/Models"
-	"alexshelto/url_shorten_service/Routers"
+    "github.com/gin-gonic/gin"
+    "alexshelto/url_shorten_service/server"
 )
 
 
 func main() {
-    router := routers.SetUpRouters()
-    models.ConnectDatabase()
 
-    router.Run(":8080")
+    router := gin.Default()
+    server := server.NewServer(router)
+
+    server.Start(":8080")
+
 }
 
