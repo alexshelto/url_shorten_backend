@@ -1,12 +1,14 @@
 package handlers
 
 import (
-    "net/http"
+	"errors"
+	"net/http"
 
-    "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 
-    "alexshelto/url_shorten_service/services"
-    "alexshelto/url_shorten_service/models"
+	"alexshelto/url_shorten_service/models"
+	"alexshelto/url_shorten_service/services"
 )
 
 type LinkHandler struct {
@@ -26,7 +28,11 @@ func (lh *LinkHandler) GetLink(context *gin.Context) {
     link, err := lh.LinkService.GetLinkById(linkId)
 
     if err != nil {
-        context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch link"})
+        if errors.Is(err, gorm.ErrRecordNotFound) {
+            context.JSON(http.StatusNotFound, gin.H{"error": "404 Resource not found"})
+        } else {
+            context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch link"})
+        }
         return
     }
 
