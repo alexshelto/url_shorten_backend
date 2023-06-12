@@ -8,7 +8,6 @@ import (
 	"alexshelto/url_shorten_service/handlers"
 	"alexshelto/url_shorten_service/services"
 	"alexshelto/url_shorten_service/repositories"
-
 	"alexshelto/url_shorten_service/routes"
 )
 

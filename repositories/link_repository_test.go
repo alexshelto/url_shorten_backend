@@ -30,6 +30,7 @@ func generateLink() models.Link {
     }
 }
 
+/*
 // Running Tests 
 func TestLinkRepository(t *testing.T) {
     t.Run("CreateLink_Success", TestCreateLink_Success)
@@ -38,11 +39,12 @@ func TestLinkRepository(t *testing.T) {
     t.Run("GetLinkByShortenedUrl_Success", TestGetLinkByShortenedUrl_Success)
     t.Run("GetLinkByShortenedUrl_Fails", TestGetLinkByShortenedUrl_Fails)
 }
+*/
 
 
 /// Defining Tests
 
-func TestCreateLink_Success(t *testing.T) {
+func TestLinkRepositoryCreateLink_Success(t *testing.T) {
     db, linkRepo := setupTest()
     defer testutils.TeardownTestDatabase(db)
     
@@ -56,7 +58,7 @@ func TestCreateLink_Success(t *testing.T) {
 }
 
 
-func TestGetLinkById_Success(t *testing.T) {
+func TestLinkRepositoryGetLinkById_Success(t *testing.T) {
     db, linkRepo := setupTest()
     defer testutils.TeardownTestDatabase(db)
     
@@ -82,7 +84,7 @@ func TestGetLinkById_Success(t *testing.T) {
 }
 
 
-func TestGetLinkById_Fails(t *testing.T) {
+func TestLinkRepositoryGetLinkById_Fails(t *testing.T) {
     db, linkRepo := setupTest()
     defer testutils.TeardownTestDatabase(db)
     
@@ -93,7 +95,7 @@ func TestGetLinkById_Fails(t *testing.T) {
     assert.Equal(t, errors.Is(err, gorm.ErrRecordNotFound), true)
 }
 
-func TestGetLinkByShortenedUrl_Success(t *testing.T) {
+func TestLinkRepositoryGetLinkByShortenedUrl_Success(t *testing.T) {
     db, linkRepo := setupTest()
     defer testutils.TeardownTestDatabase(db)
     
@@ -116,7 +118,7 @@ func TestGetLinkByShortenedUrl_Success(t *testing.T) {
 }
 
 
-func TestGetLinkByShortenedUrl_Fails(t *testing.T) {
+func TestLinkRepositoryGetLinkByShortenedUrl_Fails(t *testing.T) {
     db, linkRepo := setupTest()
     defer testutils.TeardownTestDatabase(db)
     

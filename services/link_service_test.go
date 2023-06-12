@@ -33,20 +33,21 @@ func generateLink() models.Link {
     }
 }
 
+/*
 // Running Tests 
 func TestLinkService(t *testing.T) {
-    t.Run("CreateLink_Success", TestCreateLink_Success)
-    t.Run("GetLinkById_Success", TestGetLinkById_Success)
-    t.Run("GetLinkById_Fails", TestGetLinkById_Fails)
-    t.Run("GetLinkByShortenedUrl_Success", TestGetLinkByShortenedUrl_Success)
-    t.Run("GetLinkByShortenedUrl_Fails", TestGetLinkByShortenedUrl_Fails)
+    t.Run("CreateLink_Success-Service", TestCreateLink_Success)
+    t.Run("GetLinkById_Success-Service", TestGetLinkById_Success)
+    t.Run("GetLinkById_Fails-Service", TestGetLinkById_Fails)
+    t.Run("GetLinkByShortenedUrl_Success-Service", TestGetLinkByShortenedUrl_Success)
+    t.Run("GetLinkByShortenedUrl_Fails-Service", TestGetLinkByShortenedUrl_Fails)
 }
+*/
 
 
 
 /// Defining Tests
-
-func TestCreateLink_Success(t *testing.T) {
+func TestLinkServiceCreateLink_Success(t *testing.T) {
     db, linkService := setupTest()
     defer testutils.TeardownTestDatabase(db)
 
@@ -60,7 +61,7 @@ func TestCreateLink_Success(t *testing.T) {
 }
 
 
-func TestGetLinkById_Success(t *testing.T) {
+func TestLinkServiceGetLinkById_Success(t *testing.T) {
     db, linkService := setupTest()
     defer testutils.TeardownTestDatabase(db)
 
@@ -75,7 +76,7 @@ func TestGetLinkById_Success(t *testing.T) {
 
 }
 
-func TestGetLinkById_Fails(t *testing.T) {
+func TestLinkServiceGetLinkById_Fails(t *testing.T) {
     db, linkService := setupTest()
     defer testutils.TeardownTestDatabase(db)
 
@@ -88,7 +89,7 @@ func TestGetLinkById_Fails(t *testing.T) {
 }
 
 
-func TestGetLinkByShortenedUrl_Success(t *testing.T) {
+func TestLinkServiceGetLinkByShortenedUrl_Success(t *testing.T) {
     db, linkService := setupTest()
     defer testutils.TeardownTestDatabase(db)
 
@@ -104,7 +105,7 @@ func TestGetLinkByShortenedUrl_Success(t *testing.T) {
     assert.Equal(t, requestedResource.ID, createdLink.ID)
 }
 
-func TestGetLinkByShortenedUrl_Fails(t *testing.T) {
+func TestLinkServiceGetLinkByShortenedUrl_Fails(t *testing.T) {
     db, linkService := setupTest()
     defer testutils.TeardownTestDatabase(db)
 
