@@ -6,15 +6,14 @@ import (
 
 
 type LinkHandlerInterface interface {
-    GetLinkByShortenedUrl(context *gin.Context)
     CreateLink(context *gin.Context)
     GetLinkById(context *gin.Context) 
+    RedirectToLink(context *gin.Context)
 }
 
 
 func SetupRoutes(router *gin.Engine, linkHandler LinkHandlerInterface) {
     router.POST("/l", linkHandler.CreateLink)         // Create Link
     router.GET("/link/:id", linkHandler.GetLinkById)
-    router.GET("/l/:id", linkHandler.GetLinkByShortenedUrl)         // Visit Link (redirect)
-
+    router.GET("/l/:id", linkHandler.RedirectToLink)         // Visit Link (redirect)
 }

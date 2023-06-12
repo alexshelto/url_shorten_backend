@@ -4,7 +4,7 @@ import (
 	"errors"
     "log"
 	"net/http"
-    "strconv"
+    //"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -23,7 +23,8 @@ func NewLinkHandler(service *services.LinkService) *LinkHandler {
 	}
 }
 
-func (lh *LinkHandler) GetLinkByShortenedUrl(context *gin.Context) {
+
+func (lh *LinkHandler) RedirectToLink(context *gin.Context) {
 	linkId := context.Param("id")
 
 	link, err := lh.LinkService.GetLinkByShortenedUrl(linkId)
@@ -40,35 +41,12 @@ func (lh *LinkHandler) GetLinkByShortenedUrl(context *gin.Context) {
 	context.Redirect(http.StatusPermanentRedirect, link.OriginalUrl)
 }
 
-func (lh *LinkHandler) GetLinkById(context *gin.Context) {
-	linkId := context.Param("id")
-
-    // Cast String As uint 
-    uintID, err := strconv.ParseUint(linkId, 10, 64)
-    if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id parameter"})
-        return
-    }
-
-	link, err := lh.LinkService.GetLinkById(uint(uintID))
-
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			context.JSON(http.StatusNotFound, gin.H{"error": "404 Resource not found"})
-		} else {
-			context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch link"})
-		}
-		return
-	}
-
-    log.Println("INSIDE OF get link by shortenedURL, ", link)
-    context.JSON(http.StatusNotFound, link)
-}
-
-
 
 
 func (lh *LinkHandler) CreateLink(context *gin.Context) {
+    log.Println("\n\n\nInside of create link handler")
+
+
     var linkRequest models.CreateLinkRequest
 
 	if err := context.ShouldBindJSON(&linkRequest); err != nil {
@@ -87,6 +65,7 @@ func (lh *LinkHandler) CreateLink(context *gin.Context) {
 		return
 	}
 
+    log.Println("Status Created")
 	context.JSON(http.StatusCreated, createdLink)
 }
 
