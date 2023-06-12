@@ -105,3 +105,4 @@ func TestGetLinkById_Fails(t *testing.T) {
     assert.Empty(t, requestedResource)
 }
 
+

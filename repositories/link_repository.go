@@ -34,3 +34,12 @@ func (repo *LinkRepository) GetById(linkId uint) (models.Link, error) {
 }
 
 
+func (repo *LinkRepository) GetByShortenedUrl(shortenedUrl string) (models.Link, error) {
+    var link models.Link
+
+    if err := repo.DB.First(&link, "shortened_url = ?", shortenedUrl).Error; err != nil {
+        return models.Link{}, err
+    }
+    return link, nil
+
+}

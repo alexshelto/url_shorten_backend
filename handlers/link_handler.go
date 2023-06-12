@@ -21,10 +21,10 @@ func NewLinkHandler(service *services.LinkService) *LinkHandler {
     }
 }
 
-func (lh *LinkHandler) GetLink(context *gin.Context) {
+func (lh *LinkHandler) GetLinkByShortenedUrl(context *gin.Context) {
     linkId := context.Param("id")
 
-    link, err := lh.LinkService.GetLinkById(linkId)
+    link, err := lh.LinkService.GetLinkByShortenedUrl(linkId)
 
     if err != nil {
         if errors.Is(err, gorm.ErrRecordNotFound) {
