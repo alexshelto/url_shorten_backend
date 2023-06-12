@@ -1,36 +1,25 @@
 package services
 
-
 import (
-    "gorm.io/gorm"
-    "alexshelto/url_shorten_service/models"
+	"alexshelto/url_shorten_service/models"
+	"alexshelto/url_shorten_service/repositories"
 )
 
 
 type LinkService struct {
-    DB *gorm.DB
+    repo *repositories.LinkRepository
 }
 
-func NewLinkService(db *gorm.DB) *LinkService {
+func NewLinkService(repo *repositories.LinkRepository) *LinkService {
     return &LinkService{
-        DB: db,
+        repo: repo,
     }
 }
 
 func (ls *LinkService) CreateLink(link models.Link) (models.Link, error) {
-    if err := ls.DB.Create(&link).Error; err != nil {
-        return models.Link{}, err
-    }
-    return link, nil
+    return ls.repo.Create(link)
 }
 
-func (ls *LinkService) GetLinkById(linkId string) (models.Link, error) {
-    var link models.Link
-    err := ls.DB.First(&link, linkId).Error
-
-    if err != nil {
-        return models.Link{}, err
-    }
-
-    return link, nil
+func (ls *LinkService) GetLinkById(linkId uint) (models.Link, error) {
+    return ls.repo.GetById(linkId)
 }

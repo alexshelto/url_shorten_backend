@@ -7,6 +7,8 @@ import (
 	"alexshelto/url_shorten_service/database"
 	"alexshelto/url_shorten_service/handlers"
 	"alexshelto/url_shorten_service/services"
+	"alexshelto/url_shorten_service/repositories"
+
 	"alexshelto/url_shorten_service/routes"
 )
 
@@ -14,7 +16,8 @@ import (
 func main() {
     db := database.InitializeDatabase("data.db")
 
-    linkService := services.NewLinkService(db)
+    linkRepository := repositories.NewLinkRepository(db)
+    linkService := services.NewLinkService(linkRepository)
     linkHandler := handlers.NewLinkHandler(linkService)
 
     // Create new router
