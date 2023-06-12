@@ -21,7 +21,6 @@ func NewLinkHandler(service *services.LinkService) *LinkHandler {
     }
 }
 
-
 func (lh *LinkHandler) GetLink(context *gin.Context) {
     linkId := context.Param("id")
 
@@ -47,13 +46,13 @@ func (lh *LinkHandler) CreateLink(context *gin.Context) {
         return
     }
 
-    err := lh.LinkService.CreateLink(newLink)
+    createdLink, err := lh.LinkService.CreateLink(newLink)
     if err != nil {
         context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create link"})
         return
     }
 
-    context.JSON(http.StatusCreated, newLink)
+    context.JSON(http.StatusCreated, createdLink)
 }
 
 func (lh *LinkHandler) Hello(context *gin.Context) {

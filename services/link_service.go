@@ -17,9 +17,11 @@ func NewLinkService(db *gorm.DB) *LinkService {
     }
 }
 
-func (ls *LinkService) CreateLink(link models.Link) error {
-    err := ls.DB.Create(&link).Error
-    return err
+func (ls *LinkService) CreateLink(link models.Link) (models.Link, error) {
+    if err := ls.DB.Create(&link).Error; err != nil {
+        return models.Link{}, err
+    }
+    return link, nil
 }
 
 func (ls *LinkService) GetLinkById(linkId string) (models.Link, error) {
