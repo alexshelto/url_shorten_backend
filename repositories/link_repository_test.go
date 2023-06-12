@@ -1,28 +1,25 @@
-package services
+package repositories
+
 
 import (
     "errors"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
+	"github.com/stretchr/testify/assert"
 
 	"alexshelto/url_shorten_service/testutils"
 	"alexshelto/url_shorten_service/models"
-	"alexshelto/url_shorten_service/repositories"
 )
 
 
-
-func setupTest() (*gorm.DB, *LinkService) {
+func setupTest() (*gorm.DB, *LinkRepository) {
     db := testutils.SetupTestDatabase()
 
-    linkRepo := repositories.NewLinkRepository(db)
-    linkService := NewLinkService(linkRepo)
+    linkRepo := NewLinkRepository(db)
 
-    return db, linkService 
+    return db, linkRepo;
 }
-
 
 
 func generateLink() models.Link {
@@ -34,7 +31,7 @@ func generateLink() models.Link {
 }
 
 // Running Tests 
-func TestLinkService(t *testing.T) {
+func TestLinkRepository(t *testing.T) {
     t.Run("CreateLink_Success", TestCreateLink_Success)
     t.Run("GetLinkById_Success", TestGetLinkById_Success)
     t.Run("GetLinkById_Fails", TestGetLinkById_Fails)
@@ -43,72 +40,87 @@ func TestLinkService(t *testing.T) {
 }
 
 
-
 /// Defining Tests
 
 func TestCreateLink_Success(t *testing.T) {
-    db, linkService := setupTest()
+    db, linkRepo := setupTest()
     defer testutils.TeardownTestDatabase(db)
-
-    linkPayload := generateLink()
-
-    createdLink, err := linkService.CreateLink(linkPayload)
+    
+    link := generateLink()
+    createdLink, err := linkRepo.Create(link)
 
     assert.NoError(t, err)
+    assert.NotNil(t, createdLink)
     assert.NotEmpty(t, createdLink.ID)
-    assert.Equal(t, createdLink.OriginalUrl, linkPayload.OriginalUrl)
+    assert.Equal(t, createdLink.OriginalUrl, link.OriginalUrl)
 }
 
 
 func TestGetLinkById_Success(t *testing.T) {
-    db, linkService := setupTest()
+    db, linkRepo := setupTest()
     defer testutils.TeardownTestDatabase(db)
+    
+    link := generateLink()
 
-    linkPayload := generateLink()
+    createdLink, err := linkRepo.Create(link)
 
-    createdLink, err := linkService.CreateLink(linkPayload)
     assert.NoError(t, err)
+    assert.NotNil(t, createdLink)
+    assert.NotEmpty(t, createdLink.ID)
+    assert.Equal(t, createdLink.OriginalUrl, link.OriginalUrl)
 
-    requestedResource, err := linkService.GetLinkById(createdLink.ID)
-    assert.NoError(t, err)
-    assert.Equal(t, requestedResource.OriginalUrl, createdLink.OriginalUrl)
+    var existingId uint = createdLink.ID
 
-}
+    requestedResource, err := linkRepo.GetById(existingId)
 
-func TestGetLinkById_Fails(t *testing.T) {
-    db, linkService := setupTest()
-    defer testutils.TeardownTestDatabase(db)
-
-    var nonExistantId uint = 12;
-
-    requestedResource, err := linkService.GetLinkById(nonExistantId)
-    assert.Error(t, err)
-    assert.Equal(t, errors.Is(err, gorm.ErrRecordNotFound), true)
-    assert.Empty(t, requestedResource)
-}
-
-
-func TestGetLinkByShortenedUrl_Success(t *testing.T) {
-    db, linkService := setupTest()
-    defer testutils.TeardownTestDatabase(db)
-
-    linkPayload := generateLink()
-
-    createdLink, err := linkService.CreateLink(linkPayload)
-    assert.NoError(t, err)
-
-    requestedResource, err := linkService.GetLinkByShortenedUrl(createdLink.ShortenedUrl)
     assert.NoError(t, err)
     assert.NotNil(t, requestedResource)
-    assert.Equal(t, requestedResource.OriginalUrl, createdLink.OriginalUrl)
+    assert.NotEmpty(t, requestedResource.ID)
+    assert.Equal(t, requestedResource.OriginalUrl, requestedResource.OriginalUrl)
     assert.Equal(t, requestedResource.ID, createdLink.ID)
+    assert.Equal(t, requestedResource.OriginalUrl, createdLink.OriginalUrl)
 }
 
-func TestGetLinkByShortenedUrl_Fails(t *testing.T) {
-    db, linkService := setupTest()
-    defer testutils.TeardownTestDatabase(db)
 
-    _, err := linkService.GetLinkByShortenedUrl("this-doesnt-exist")
+func TestGetLinkById_Fails(t *testing.T) {
+    db, linkRepo := setupTest()
+    defer testutils.TeardownTestDatabase(db)
+    
+    var nonExistantId uint = 12
+    _, err := linkRepo.GetById(nonExistantId)
+
+    assert.Error(t, err)
+    assert.Equal(t, errors.Is(err, gorm.ErrRecordNotFound), true)
+}
+
+func TestGetLinkByShortenedUrl_Success(t *testing.T) {
+    db, linkRepo := setupTest()
+    defer testutils.TeardownTestDatabase(db)
+    
+    link := generateLink()
+
+    createdLink, err := linkRepo.Create(link)
+
+    assert.NoError(t, err)
+    assert.NotNil(t, createdLink)
+    assert.NotEmpty(t, createdLink.ID)
+    assert.Equal(t, createdLink.OriginalUrl, link.OriginalUrl)
+
+    requestedResource, err := linkRepo.GetByShortenedUrl(createdLink.ShortenedUrl)
+
+    assert.NoError(t, err)
+    assert.NotNil(t, requestedResource)
+    assert.NotEmpty(t, requestedResource.ID)
+    assert.Equal(t, requestedResource.ID, createdLink.ID)
+    assert.Equal(t, requestedResource.OriginalUrl, createdLink.OriginalUrl)
+}
+
+
+func TestGetLinkByShortenedUrl_Fails(t *testing.T) {
+    db, linkRepo := setupTest()
+    defer testutils.TeardownTestDatabase(db)
+    
+    _, err := linkRepo.GetByShortenedUrl("this-doesnt-exist")
 
     assert.Error(t, err)
     assert.Equal(t, errors.Is(err, gorm.ErrRecordNotFound), true)
