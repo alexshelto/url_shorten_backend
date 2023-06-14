@@ -1,7 +1,7 @@
 package BaseConversion
 
-func ConvertToBase62(number int) string {
-    const BASE = 62
+func ConvertToBase62(number uint) string {
+    var BASE uint = 62;
     ret := ""
     for {
         if number >= BASE {
@@ -15,7 +15,7 @@ func ConvertToBase62(number int) string {
     }
 }
 
-var Base62Mappings = map[int]string{
+var Base62Mappings = map[uint]string{
     0: "0",
     1: "1",
     2: "2",

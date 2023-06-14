@@ -170,3 +170,5 @@ func TestLinkHandlerGetLinkById_FailsBadId(t *testing.T) {
 	router.ServeHTTP(recorder, req)
 	assert.Equal(t, http.StatusBadRequest, recorder.Code)
 }
+
+

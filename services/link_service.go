@@ -3,6 +3,7 @@ package services
 import (
 	"alexshelto/url_shorten_service/models"
 	"alexshelto/url_shorten_service/repositories"
+	"alexshelto/url_shorten_service/utils"
 )
 
 
@@ -17,7 +18,13 @@ func NewLinkService(repo *repositories.LinkRepository) *LinkService {
 }
 
 func (ls *LinkService) CreateLink(link models.Link) (models.Link, error) {
-    return ls.repo.Create(link)
+    link, err := ls.repo.Create(link)
+    if err != nil {
+        return link, err
+    }
+
+    generatedUrl := BaseConversion.ConvertToBase62(link.ID)
+    return ls.repo.UpdateShortenedUrlById(link, generatedUrl)
 }
 
 func (ls *LinkService) GetLinkById(linkId uint) (models.Link, error) {

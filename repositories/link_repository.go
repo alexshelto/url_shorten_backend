@@ -33,6 +33,13 @@ func (repo *LinkRepository) GetById(linkId uint) (models.Link, error) {
     return link, nil
 }
 
+func (repo *LinkRepository) UpdateShortenedUrlById(link models.Link, shortenedUrl string) (models.Link, error) {
+    if err := repo.DB.Model(&link).Update("shortened_url", shortenedUrl).Error; err != nil {
+        return link, err
+    }
+    return link, nil
+}
+
 
 func (repo *LinkRepository) GetByShortenedUrl(shortenedUrl string) (models.Link, error) {
     var link models.Link
