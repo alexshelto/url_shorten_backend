@@ -18,5 +18,5 @@ type CreateLinkRequest struct {
 
 
 type CreateLinkFormData struct {
-    OriginalUrl string `form:"url"`
+    OriginalUrl string `form:"url" binding:"required"`
 }

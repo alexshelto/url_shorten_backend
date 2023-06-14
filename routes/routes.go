@@ -21,7 +21,7 @@ func SetupRoutes(router *gin.Engine, linkHandler LinkHandlerInterface) {
 
     // Crud Operations
     router.POST("/l", linkHandler.CreateLink)         // Create Link
-    router.GET("/link/:id", linkHandler.GetLinkById)  //TODO: Change to ID 
+    router.GET("/l/id/:id", linkHandler.GetLinkById)  //TODO: Change to ID 
 
     // Forms 
     // Dont want a collision

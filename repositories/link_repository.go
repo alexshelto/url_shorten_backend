@@ -1,6 +1,8 @@
 package repositories
 
 import (
+    "log"
+
     "gorm.io/gorm"
     "alexshelto/url_shorten_service/models"
 )
@@ -53,6 +55,9 @@ func (repo *LinkRepository) GetByShortenedUrl(shortenedUrl string) (models.Link,
     if err := repo.DB.First(&link, "shortened_url = ?", shortenedUrl).Error; err != nil {
         return models.Link{}, err
     }
+
+    log.Println("Inside of get by shortenedURL")
+
 
     visitCount := link.VisitCount
 
