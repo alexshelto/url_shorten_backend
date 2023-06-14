@@ -90,8 +90,6 @@ func (lh *LinkHandler) CreateLinkPage(context *gin.Context) {
 func (lh *LinkHandler) CreateLinkFormHandler(context *gin.Context) {
 	var formLink models.CreateLinkFormData
 
-	//fmt.Println("###### Context: ", context)
-
 	if err := context.ShouldBind(&formLink); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
