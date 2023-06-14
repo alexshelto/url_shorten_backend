@@ -3,7 +3,7 @@ package handlers
 import (
 	"errors"
 	"net/http"
-    "strconv"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -22,7 +22,6 @@ func NewLinkHandler(service *services.LinkService) *LinkHandler {
 	}
 }
 
-
 func (lh *LinkHandler) RedirectToLink(context *gin.Context) {
 	shortened_url := context.Param("hash")
 
@@ -30,13 +29,12 @@ func (lh *LinkHandler) RedirectToLink(context *gin.Context) {
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-            context.HTML(http.StatusNotFound, "404.html", nil)
+			context.HTML(http.StatusNotFound, "404.html", gin.H{"error": "Failed to fetch link"})
 		} else {
 			context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch link"})
 		}
 		return
 	}
-
 	context.Redirect(http.StatusPermanentRedirect, link.OriginalUrl)
 }
 
@@ -47,33 +45,30 @@ func (lh *LinkHandler) GetAnalyticsByUrl(context *gin.Context) {
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-            context.HTML(http.StatusNotFound, "404.html", nil)
+			context.HTML(http.StatusNotFound, "404.html", nil)
 		} else {
 			context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch link"})
 		}
 		return
 	}
 
-    context.HTML(http.StatusOK, "analytics.html", gin.H{
-        "createdAt": link.CreatedAt,
-        "originalUrl": link.OriginalUrl,
-        "generatedUrl": link.ShortenedUrl,
-        "visitCount": link.VisitCount,
-    })
+	context.HTML(http.StatusOK, "analytics.html", gin.H{
+		"createdAt":    link.CreatedAt,
+		"originalUrl":  link.OriginalUrl,
+		"generatedUrl": link.ShortenedUrl,
+		"visitCount":   link.VisitCount,
+	})
 }
-
-
-
 
 func (lh *LinkHandler) GetLinkById(context *gin.Context) {
 	linkId := context.Param("id")
 
-    // Cast String As uint 
-    uintID, err := strconv.ParseUint(linkId, 10, 64)
-    if err != nil {
+	// Cast String As uint
+	uintID, err := strconv.ParseUint(linkId, 10, 64)
+	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid id parameter"})
-        return
-    }
+		return
+	}
 
 	link, err := lh.LinkService.GetLinkById(uint(uintID))
 
@@ -85,25 +80,54 @@ func (lh *LinkHandler) GetLinkById(context *gin.Context) {
 		}
 		return
 	}
-
-    context.JSON(http.StatusOK, link)
+	context.JSON(http.StatusOK, link)
 }
 
+func (lh *LinkHandler) CreateLinkPage(context *gin.Context) {
+	context.HTML(http.StatusOK, "create_link.html", nil)
+}
 
+func (lh *LinkHandler) CreateLinkFormHandler(context *gin.Context) {
+	var formLink models.CreateLinkFormData
 
+	//fmt.Println("###### Context: ", context)
+
+	if err := context.ShouldBind(&formLink); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+		return
+	}
+
+	// Translate the Request into a GOrm link type
+	link := models.Link{
+		OriginalUrl: formLink.OriginalUrl,
+	}
+
+	createdLink, err := lh.LinkService.CreateLink(link)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create link"})
+		return
+	}
+
+	context.HTML(http.StatusOK, "analytics.html", gin.H{
+		"createdAt":    createdLink.CreatedAt,
+		"originalUrl":  createdLink.OriginalUrl,
+		"generatedUrl": createdLink.ShortenedUrl,
+		"visitCount":   createdLink.VisitCount,
+	})
+}
 
 func (lh *LinkHandler) CreateLink(context *gin.Context) {
-    var linkRequest models.CreateLinkRequest
+	var linkRequest models.CreateLinkRequest
 
 	if err := context.ShouldBindJSON(&linkRequest); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
 	}
 
-    // Translate the Request into a GOrm link type
-    link := models.Link {
-        OriginalUrl: linkRequest.OriginalUrl,
-    }
+	// Translate the Request into a GOrm link type
+	link := models.Link{
+		OriginalUrl: linkRequest.OriginalUrl,
+	}
 
 	createdLink, err := lh.LinkService.CreateLink(link)
 	if err != nil {
@@ -113,5 +137,4 @@ func (lh *LinkHandler) CreateLink(context *gin.Context) {
 
 	context.JSON(http.StatusCreated, createdLink)
 }
-
 

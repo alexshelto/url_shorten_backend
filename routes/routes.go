@@ -7,6 +7,9 @@ import (
 
 type LinkHandlerInterface interface {
     CreateLink(context *gin.Context)
+    CreateLinkPage(context *gin.Context)
+    CreateLinkFormHandler(context *gin.Context)
+
     GetLinkById(context *gin.Context) 
     RedirectToLink(context *gin.Context)
     GetAnalyticsByUrl(context *gin.Context)
@@ -15,10 +18,17 @@ type LinkHandlerInterface interface {
 
 // TODO: Really Drill in difference between "ID" and "shortened_url" or "encoded_url"
 func SetupRoutes(router *gin.Engine, linkHandler LinkHandlerInterface) {
+
+    // Crud Operations
     router.POST("/l", linkHandler.CreateLink)         // Create Link
-    router.GET("/link/:id", linkHandler.GetLinkById)
+    router.GET("/l/id/:id", linkHandler.GetLinkById)  //TODO: Change to ID 
 
-    router.GET("/l/:hash", linkHandler.RedirectToLink)         // Visit Link (redirect)
-    router.GET("/l/analytics/:hash", linkHandler.GetAnalyticsByUrl)         // Visit Link (redirect)
+    // Forms 
+    // Dont want a collision
+    router.GET("/l/create/form", linkHandler.CreateLinkPage)
+    router.POST("/l/create/form", linkHandler.CreateLinkFormHandler)
 
+    // Redirect and analytics routes
+    router.GET("/l/:hash", linkHandler.RedirectToLink)         
+    router.GET("/l/analytics/:hash", linkHandler.GetAnalyticsByUrl)         
 }

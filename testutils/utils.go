@@ -8,26 +8,24 @@ import (
 	"gorm.io/gorm"
 
 	"alexshelto/url_shorten_service/database"
-    /*
-    "errors"
-	"testing"
-
-	"github.com/stretchr/testify/assert"
-
 	"alexshelto/url_shorten_service/models"
-	"alexshelto/url_shorten_service/repositories"
-    */
 )
-
 
 
 var TestDatabaseName = "test_database.db"
 
-
 func SetupTestDatabase() *gorm.DB {
-    return database.InitializeDatabase(TestDatabaseName)
+    db := database.InitializeDatabase(TestDatabaseName)
+    return db
 }
 
+func SeedLinksTestDatabase(db *gorm.DB,links []models.Link) {
+    err := db.Create(links).Error
+
+    if err != nil {
+        panic("Failed to seed test database, exiting")
+    }
+}
 
 func TeardownTestDatabase(db *gorm.DB) {
     sqlDB, err := db.DB()
@@ -42,5 +40,4 @@ func TeardownTestDatabase(db *gorm.DB) {
         log.Fatal("failed to remove test db file", err)
     }
 }
-
 
