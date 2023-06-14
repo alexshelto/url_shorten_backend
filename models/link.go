@@ -15,3 +15,4 @@ type Link struct {
 type CreateLinkRequest struct {
     OriginalUrl string `json:"original_url" binding:"required"`
 }
+

@@ -21,6 +21,7 @@ func main() {
 
     // Create new router
     router := gin.Default()
+    router.LoadHTMLGlob("static/*html")
     router.Use(cors.Default())
 
     // Apply Endpoints 

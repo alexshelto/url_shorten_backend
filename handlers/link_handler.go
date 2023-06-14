@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-    "log"
 	"net/http"
     "strconv"
 
@@ -31,7 +30,7 @@ func (lh *LinkHandler) RedirectToLink(context *gin.Context) {
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			context.JSON(http.StatusNotFound, gin.H{"error": "404 Resource not found"})
+            context.HTML(http.StatusNotFound, "404.html", nil)
 		} else {
 			context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch link"})
 		}
@@ -67,9 +66,36 @@ func (lh *LinkHandler) GetLinkById(context *gin.Context) {
 }
 
 
-func (lh *LinkHandler) CreateLink(context *gin.Context) {
-    log.Println("\n\n\nInside of create link handler")
+func (lh *LinkHandler) GetAnalyticsByUrl(context *gin.Context) {
+	shortened_url := context.Param("id")
 
+	link, err := lh.LinkService.GetLinkByShortenedUrl(shortened_url)
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+            context.HTML(http.StatusNotFound, "404.html", nil)
+		} else {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch link"})
+		}
+		return
+	}
+
+
+    context.HTML(http.StatusOK, "analytics.html", gin.H{
+        "createdAt": link.CreatedAt,
+        "originalUrl": link.OriginalUrl,
+        "generatedUrl": link.ShortenedUrl,
+        "visitCount": link.VisitCount,
+    })
+
+
+}
+
+
+
+
+
+func (lh *LinkHandler) CreateLink(context *gin.Context) {
     var linkRequest models.CreateLinkRequest
 
 	if err := context.ShouldBindJSON(&linkRequest); err != nil {
@@ -88,7 +114,6 @@ func (lh *LinkHandler) CreateLink(context *gin.Context) {
 		return
 	}
 
-    log.Println("Status Created")
 	context.JSON(http.StatusCreated, createdLink)
 }
 
