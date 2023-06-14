@@ -1,7 +1,6 @@
-package BaseConversion
+package utils
 
 import "testing"
-
 
 type testParam struct {
     in uint

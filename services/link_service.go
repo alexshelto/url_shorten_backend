@@ -23,7 +23,7 @@ func (ls *LinkService) CreateLink(link models.Link) (models.Link, error) {
         return link, err
     }
 
-    generatedUrl := BaseConversion.ConvertToBase62(link.ID)
+    generatedUrl := utils.ConvertToBase62(link.ID)
     return ls.repo.UpdateShortenedUrlById(link, generatedUrl)
 }
 

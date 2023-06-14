@@ -1,7 +1,7 @@
-package BaseConversion
+package utils
 
 func ConvertToBase62(number uint) string {
-    var BASE uint = 62;
+    const BASE = 62
     ret := ""
     for {
         if number >= BASE {
