@@ -3,7 +3,6 @@ package handlers
 import (
 	"bytes"
     "encoding/json"
-	"log"
 	"net/http"
 	"net/http/httptest"
 
@@ -21,8 +20,6 @@ import (
 	"alexshelto/url_shorten_service/services"
 	"alexshelto/url_shorten_service/testutils"
 )
-
-// TODO: Add routes stuff to setup
 
 var TestLinks = []models.Link{
 	models.Link{
@@ -69,7 +66,6 @@ func TestLinkHandler_CreateLinkRequest_Fails_NoBody(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Capture response
 	recorder := httptest.NewRecorder()
 
 	router.ServeHTTP(recorder, req)
@@ -94,7 +90,6 @@ func TestLinkHandler_CreateLinkRequest_Success(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// Capture response
 	recorder := httptest.NewRecorder()
 
 	router.ServeHTTP(recorder, req)
@@ -118,6 +113,39 @@ func TestLinkHandler_GetLinkById_Success(t *testing.T) {
 	router.ServeHTTP(recorder, req)
     assert.Equal(t, http.StatusOK, recorder.Code)
 }
+
+func TestLinkHandler_GetLinkById_Fails_404(t *testing.T) {
+	db, router := setupTest()
+	defer testutils.TeardownTestDatabase(db)
+
+	req, err := http.NewRequest("GET", "/l/id/12", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	recorder := httptest.NewRecorder()
+
+	router.ServeHTTP(recorder, req)
+	assert.Equal(t, http.StatusNotFound, recorder.Code)
+}
+
+
+
+func TestLinkHandler_GetLinkById_Fails_BadId(t *testing.T) {
+	db, router := setupTest()
+	defer testutils.TeardownTestDatabase(db)
+
+	req, err := http.NewRequest("GET", "/l/id/12a1afasf", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	recorder := httptest.NewRecorder()
+
+	router.ServeHTTP(recorder, req)
+	assert.Equal(t, http.StatusBadRequest, recorder.Code)
+}
+
 
 func TestLinkHandler_GetLinkByShortened_Redirect_Success(t *testing.T) {
 	db, router := setupTest()
@@ -146,7 +174,6 @@ func TestLinkHandler_GetLinkByShortened_Redirect_Fails(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(recorder, req)
 
-	log.Default()
 	assert.Equal(t, http.StatusNotFound, recorder.Code)
 }
 
@@ -165,7 +192,6 @@ func TestLinkHandler_GetLinkByShortened_Analytics_Success(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(recorder, req)
 
-	log.Default()
 	assert.Equal(t, http.StatusOK, recorder.Code)
 }
 
@@ -182,44 +208,10 @@ func TestLinkHandler_GetLinkByShortened_Analytics_Fails_404(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	router.ServeHTTP(recorder, req)
 
-	log.Default()
 	assert.Equal(t, http.StatusNotFound, recorder.Code)
 }
 
 
-func TestLinkHandler_GetLinkById_Fails_404(t *testing.T) {
-	db, router := setupTest()
-	defer testutils.TeardownTestDatabase(db)
-
-	req, err := http.NewRequest("GET", "/l/id/12", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// Capture response
-	recorder := httptest.NewRecorder()
-
-	router.ServeHTTP(recorder, req)
-	assert.Equal(t, http.StatusNotFound, recorder.Code)
-}
-
-
-
-func TestLinkHandler_GetLinkById_Fails_BadId(t *testing.T) {
-	db, router := setupTest()
-	defer testutils.TeardownTestDatabase(db)
-
-	req, err := http.NewRequest("GET", "/l/id/12a1afasf", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// Capture response
-	recorder := httptest.NewRecorder()
-
-	router.ServeHTTP(recorder, req)
-	assert.Equal(t, http.StatusBadRequest, recorder.Code)
-}
 
 
 func TestLinkHandler_GetCreateLinkForm_Success(t *testing.T) {
@@ -275,6 +267,3 @@ func TestLinkHandler_PostCreateLinkForm_BadFormData_Fails(t *testing.T) {
     assert.Equal(t, http.StatusBadRequest, recorder.Code)
 }
 
-
-
-// NOTE: Test redirect

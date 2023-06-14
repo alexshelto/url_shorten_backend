@@ -97,13 +97,6 @@ func (lh *LinkHandler) CreateLinkFormHandler(context *gin.Context) {
 		return
 	}
 
-	/*
-		    if formLink.OriginalUrl == "" {
-				context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
-		        return
-		    }
-	*/
-
 	// Translate the Request into a GOrm link type
 	link := models.Link{
 		OriginalUrl: formLink.OriginalUrl,
@@ -144,3 +137,4 @@ func (lh *LinkHandler) CreateLink(context *gin.Context) {
 
 	context.JSON(http.StatusCreated, createdLink)
 }
+
