@@ -16,3 +16,7 @@ type CreateLinkRequest struct {
     OriginalUrl string `json:"original_url" binding:"required"`
 }
 
+
+type CreateLinkFormData struct {
+    OriginalUrl string `form:"url"`
+}

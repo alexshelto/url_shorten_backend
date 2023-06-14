@@ -22,7 +22,6 @@ func NewLinkHandler(service *services.LinkService) *LinkHandler {
 	}
 }
 
-
 func (lh *LinkHandler) RedirectToLink(context *gin.Context) {
 	shortened_url := context.Param("hash")
 
@@ -63,8 +62,6 @@ func (lh *LinkHandler) GetAnalyticsByUrl(context *gin.Context) {
 }
 
 
-
-
 func (lh *LinkHandler) GetLinkById(context *gin.Context) {
 	linkId := context.Param("id")
 
@@ -89,7 +86,35 @@ func (lh *LinkHandler) GetLinkById(context *gin.Context) {
     context.JSON(http.StatusOK, link)
 }
 
+func (lh *LinkHandler) CreateLinkPage(context *gin.Context) {
+    context.HTML(http.StatusOK, "create_link.html", nil)
+}
 
+func (lh *LinkHandler) CreateLinkFormHandler(context *gin.Context) {
+    formLink := &models.CreateLinkFormData{}
+
+    if err := context.Bind(formLink); err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch link"})
+    }
+
+    // Translate the Request into a GOrm link type
+    link := models.Link {
+        OriginalUrl: formLink.OriginalUrl,
+    }
+
+	createdLink, err := lh.LinkService.CreateLink(link)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create link"})
+		return
+	}
+
+    context.HTML(http.StatusOK, "analytics.html", gin.H{
+        "createdAt": createdLink.CreatedAt,
+        "originalUrl": createdLink.OriginalUrl,
+        "generatedUrl": createdLink.ShortenedUrl,
+        "visitCount": createdLink.VisitCount,
+    })
+}
 
 
 func (lh *LinkHandler) CreateLink(context *gin.Context) {

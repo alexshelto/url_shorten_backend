@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Analytics</title>
+    <title>shelto.xyz shorten url</title>
 </head>
 
 <body>
@@ -14,15 +14,19 @@
     <div class="flex items-center justify-center h-screen bg-slate-700">
         <!-- Card -->
         <div class="bg-zinc-800 p-2 mx-6 rounded-2xl w-1/2 h-1/2">
-
             <!-- Flex Container -->
             <div class="flex flex-col rounded-l-xl space-y-5">
-                <div class="items-center justify-center font-serif text-xl font-medium text-center text-white ">
+                <div class="items-center justify-center font-serif text-xl font-medium text-center text-white">
 
-                    <h2>Created at: {{.createdAt}} <h2>
-                    <h2>redirects to: {{.originalUrl}} </h2>
-                    <h2>visit count: {{.visitCount}}</h2>
-                    <a href="/l/{{.generatedUrl}}">shelto.xyz/l/{{.generatedUrl}}</a>
+                    <form action="/l/create/form" method="POST">
+                        <div>
+                            <label for="url">url<label>
+                            <input class="text-black" name="url" id="url" value="" />
+                        </div>
+                        <div>
+                            <button>Shorten URL</button>
+                        </div>
+                    </form>
 
                 </div>
             </div>
