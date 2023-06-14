@@ -24,9 +24,9 @@ func NewLinkHandler(service *services.LinkService) *LinkHandler {
 
 
 func (lh *LinkHandler) RedirectToLink(context *gin.Context) {
-	linkId := context.Param("id")
+	shortened_url := context.Param("hash")
 
-	link, err := lh.LinkService.GetLinkByShortenedUrl(linkId)
+	link, err := lh.LinkService.GetLinkByShortenedUrl(shortened_url)
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -39,6 +39,30 @@ func (lh *LinkHandler) RedirectToLink(context *gin.Context) {
 
 	context.Redirect(http.StatusPermanentRedirect, link.OriginalUrl)
 }
+
+func (lh *LinkHandler) GetAnalyticsByUrl(context *gin.Context) {
+	shortened_url := context.Param("hash")
+
+	link, err := lh.LinkService.GetLinkByShortenedUrl(shortened_url)
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+            context.HTML(http.StatusNotFound, "404.html", nil)
+		} else {
+			context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch link"})
+		}
+		return
+	}
+
+    context.HTML(http.StatusOK, "analytics.html", gin.H{
+        "createdAt": link.CreatedAt,
+        "originalUrl": link.OriginalUrl,
+        "generatedUrl": link.ShortenedUrl,
+        "visitCount": link.VisitCount,
+    })
+}
+
+
 
 
 func (lh *LinkHandler) GetLinkById(context *gin.Context) {
@@ -64,33 +88,6 @@ func (lh *LinkHandler) GetLinkById(context *gin.Context) {
 
     context.JSON(http.StatusOK, link)
 }
-
-
-func (lh *LinkHandler) GetAnalyticsByUrl(context *gin.Context) {
-	shortened_url := context.Param("id")
-
-	link, err := lh.LinkService.GetLinkByShortenedUrl(shortened_url)
-
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-            context.HTML(http.StatusNotFound, "404.html", nil)
-		} else {
-			context.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch link"})
-		}
-		return
-	}
-
-
-    context.HTML(http.StatusOK, "analytics.html", gin.H{
-        "createdAt": link.CreatedAt,
-        "originalUrl": link.OriginalUrl,
-        "generatedUrl": link.ShortenedUrl,
-        "visitCount": link.VisitCount,
-    })
-
-
-}
-
 
 
 

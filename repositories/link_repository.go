@@ -30,6 +30,12 @@ func (repo *LinkRepository) GetById(linkId uint) (models.Link, error) {
     if err := repo.DB.First(&link, linkId).Error; err != nil {
         return models.Link{}, err
     }
+
+    // Immediately go and update the visit count 
+    if err := repo.DB.Model(&link).Update("visit_count", link.VisitCount+1).Error; err != nil {
+        return models.Link{}, err
+    }
+
     return link, nil
 }
 
@@ -47,6 +53,13 @@ func (repo *LinkRepository) GetByShortenedUrl(shortenedUrl string) (models.Link,
     if err := repo.DB.First(&link, "shortened_url = ?", shortenedUrl).Error; err != nil {
         return models.Link{}, err
     }
-    return link, nil
 
+    visitCount := link.VisitCount
+
+    // Immediately go and update the visit count 
+    if err := repo.DB.Model(&link).Update("visit_count", visitCount+1).Error; err != nil {
+        return models.Link{}, err
+    }
+
+    return link, nil
 }
