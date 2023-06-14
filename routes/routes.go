@@ -2,13 +2,23 @@ package routes
 
 import (
     "github.com/gin-gonic/gin"
-    "alexshelto/url_shorten_service/handlers"
 )
 
 
-func SetupRoutes(router *gin.Engine, linkHandler *handlers.LinkHandler) {
+type LinkHandlerInterface interface {
+    CreateLink(context *gin.Context)
+    GetLinkById(context *gin.Context) 
+    RedirectToLink(context *gin.Context)
+    GetAnalyticsByUrl(context *gin.Context)
+}
+
+
+// TODO: Really Drill in difference between "ID" and "shortened_url" or "encoded_url"
+func SetupRoutes(router *gin.Engine, linkHandler LinkHandlerInterface) {
     router.POST("/l", linkHandler.CreateLink)         // Create Link
-    router.GET("/l/:id", linkHandler.GetLinkByShortenedUrl)         // Visit Link (redirect)
-    router.GET("/l/stats/:id", linkHandler.GetLinkByShortenedUrl)   // Visit Link: stats with link
-    router.GET("/hello/:id", linkHandler.Hello)       // Test Hello
+    router.GET("/link/:id", linkHandler.GetLinkById)
+
+    router.GET("/l/:hash", linkHandler.RedirectToLink)         // Visit Link (redirect)
+    router.GET("/l/analytics/:hash", linkHandler.GetAnalyticsByUrl)         // Visit Link (redirect)
+
 }

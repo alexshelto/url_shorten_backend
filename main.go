@@ -8,7 +8,6 @@ import (
 	"alexshelto/url_shorten_service/handlers"
 	"alexshelto/url_shorten_service/services"
 	"alexshelto/url_shorten_service/repositories"
-
 	"alexshelto/url_shorten_service/routes"
 )
 
@@ -22,6 +21,7 @@ func main() {
 
     // Create new router
     router := gin.Default()
+    router.LoadHTMLGlob("static/*html")
     router.Use(cors.Default())
 
     // Apply Endpoints 

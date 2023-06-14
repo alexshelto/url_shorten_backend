@@ -1,6 +1,6 @@
-package BaseConversion
+package utils
 
-func ConvertToBase62(number int) string {
+func ConvertToBase62(number uint) string {
     const BASE = 62
     ret := ""
     for {
@@ -15,7 +15,7 @@ func ConvertToBase62(number int) string {
     }
 }
 
-var Base62Mappings = map[int]string{
+var Base62Mappings = map[uint]string{
     0: "0",
     1: "1",
     2: "2",
